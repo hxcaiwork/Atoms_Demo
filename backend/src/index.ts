@@ -47,6 +47,17 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Atoms Demo API is running' });
 });
 
+// Serve frontend static files in production
+if (process.env.NODE_ENV === 'production') {
+  const frontendPath = path.resolve(__dirname, '../../frontend/dist');
+  app.use(express.static(frontendPath));
+
+  // All other requests go to index.html (SPA)
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(frontendPath, 'index.html'));
+  });
+}
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
